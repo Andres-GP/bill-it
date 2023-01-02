@@ -1,5 +1,6 @@
 <template>
   <div class="home container">
+    <!-- Header -->
     <div class="header flex">
       <div class="left flex flex-column">
         <h1>Invoices</h1>
@@ -24,11 +25,18 @@
       </div>
       </div>
     </div>
+
+    <!-- Invoices -->
+
+    <div>
+      <Invoice v-for="(invoice, index) in invoiceData" :invoice="invoice" :key="index"/>
+    </div>
   </div>
 </template>
 
 <script>
-import {mapMutations} from "vuex";
+import Invoice from "../components/Invoice.vue"
+import { mapMutations, mapState } from "vuex";
 export default {
   name: "Home",
   data() {
@@ -36,7 +44,9 @@ export default {
       filterMenu: null,
     };
   },
-  components: {},
+  components: {
+    Invoice,
+  },
   methods: {
     ...mapMutations(['TOGGLE_INVOICE']),
     newInvoice() {
@@ -46,6 +56,9 @@ export default {
       this.filterMenu = !this.filterMenu
     }
   },
+  computed: {
+    ...mapState(["invoiceData"]),
+  }
 };
 </script>
 

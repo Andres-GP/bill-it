@@ -114,11 +114,11 @@
       <!-- Save/Exit -->
       <div class="save flex">
         <div class="left">
-          <button @click="closeInvoice" class="red">Cancel</button>
+          <button type="button" @click="closeInvoice" class="red">Cancel</button>
         </div>
         <div class="right">
-          <burron @onClick="saveDraft" class="dark-purple">Save Draft</burron>
-          <burron @onClick="publishInvoice" class="purple">Create Invoice</burron>
+          <burron type="submit" @onClick="saveDraft" class="dark-purple">Save Draft</burron>
+          <burron type="submit" @onClick="publishInvoice" class="purple">Create Invoice</burron>
         </div>
       </div>
     </form>
@@ -164,7 +164,13 @@ export default {
     this.invoiceDate = new Date(this.invoiceDateUnix.toLocaleDateString('en-us', this.dateOptions));
   },
   methods: {
-    ...mapMutations(['TOGGLE_INVOICE']),
+    ...mapMutations(['TOGGLE_INVOICE', 'TOGGLE_MODAL']),
+
+    checkClick(e) {
+      if(e.target === this.$refs.invoiceWrap) {
+        this.TOGGLE_MODAL();
+      }
+    },
 
     closeInvoice() {
       this.TOGGLE_INVOICE();
