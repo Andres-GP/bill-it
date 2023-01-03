@@ -1,28 +1,29 @@
 <template>
   <div @click="checkClick" ref="invoiceWrap" class="invoice-wrap flex flex-column">
-    <form @submit.prevent=submitForm class="invoice-content">
-      <Loading v-show="loading"/>
-      <h1>New Invoice</h1>
+    <form @submit.prevent="submitForm" class="invoice-content">
+      <Loading v-show="loading" />
+      <h1 v-if="!editInvoice">New Invoice</h1>
+      <h1 v-else>Edit Invoice</h1>
 
       <!-- Bill From -->
-      <div class="bill-form flex flex-column">
-        <h4>Bill Form</h4>
+      <div class="bill-from flex flex-column">
+        <h4>Bill From</h4>
         <div class="input flex flex-column">
           <label for="billerStreetAddress">Street Address</label>
-          <input required type="text" id="billerStreetAddress" v-model="billerStreetAddress"/>
+          <input required type="text" id="billerStreetAddress" v-model="billerStreetAddress" />
         </div>
-        <div class="location-detail flex">
+        <div class="location-details flex">
           <div class="input flex flex-column">
             <label for="billerCity">City</label>
-            <input required type="text" id="billerCity" v-model="billerCity"/>
+            <input required type="text" id="billerCity" v-model="billerCity" />
           </div>
           <div class="input flex flex-column">
             <label for="billerZipCode">Zip Code</label>
-            <input required type="text" id="billerZipCode" v-model="billerZipCode"/>
+            <input required type="text" id="billerZipCode" v-model="billerZipCode" />
           </div>
           <div class="input flex flex-column">
             <label for="billerCountry">Country</label>
-            <input required type="text" id="billerCountry" v-model="billerCountry"/>
+            <input required type="text" id="billerCountry" v-model="billerCountry" />
           </div>
         </div>
       </div>
@@ -32,27 +33,29 @@
         <h4>Bill To</h4>
         <div class="input flex flex-column">
           <label for="clientName">Client's Name</label>
-          <input required type="text" id="clientName" v-model="clientName"/>
+          <input required type="text" id="clientName" v-model="clientName" />
         </div>
         <div class="input flex flex-column">
           <label for="clientEmail">Client's Email</label>
-          <input required type="text" id="clientEmail" v-model="clientEmail"/>
+          <input required type="text" id="clientEmail" v-model="clientEmail" />
         </div>
         <div class="input flex flex-column">
           <label for="clientStreetAddress">Street Address</label>
-          <input required type="text" id="clientStreetAddress" v-model="clientStreetAddress"/>
+          <input required type="text" id="clientStreetAddress" v-model="clientStreetAddress" />
         </div>
-        <div class="input flex flex-column">
-          <label for="clientCity">City</label>
-          <input required type="text" id="clientCity" v-model="clientCity"/>
-        </div>
-        <div class="input flex flex-column">
-          <label for="clientZipCode">Zip Code</label>
-          <input required type="text" id="clientZipCode" v-model="clientZipCode"/>
-        </div>
-        <div class="input flex flex-column">
-          <label for="clientCountry">Country</label>
-          <input required type="text" id="clientCountry" v-model="clientCountry"/>
+        <div class="location-details flex">
+          <div class="input flex flex-column">
+            <label for="clientCity">City</label>
+            <input required type="text" id="clientCity" v-model="clientCity" />
+          </div>
+          <div class="input flex flex-column">
+            <label for="clientZipCode">Zip Code</label>
+            <input required type="text" id="clientZipCode" v-model="clientZipCode" />
+          </div>
+          <div class="input flex flex-column">
+            <label for="clientCountry">Country</label>
+            <input required type="text" id="clientCountry" v-model="clientCountry" />
+          </div>
         </div>
       </div>
 
@@ -61,11 +64,11 @@
         <div class="payment flex">
           <div class="input flex flex-column">
             <label for="invoiceDate">Invoice Date</label>
-            <input disable type="text" id="invoiceDate" v-model="invoiceDate"/>
+            <input disabled type="text" id="invoiceDate" v-model="invoiceDate" />
           </div>
           <div class="input flex flex-column">
             <label for="paymentDueDate">Payment Due</label>
-            <input disable type="text" id="paymentDueDate" v-model="paymentDueDate"/>
+            <input disabled type="text" id="paymentDueDate" v-model="paymentDueDate" />
           </div>
         </div>
         <div class="input flex flex-column">
@@ -76,36 +79,29 @@
           </select>
         </div>
         <div class="input flex flex-column">
-            <label for="productDescription">Product Description</label>
-            <input required type="text" id="productDescription" v-model="productDescription"/>
+          <label for="productDescription">Product Description</label>
+          <input required type="text" id="productDescription" v-model="productDescription" />
         </div>
         <div class="work-items">
           <h3>Item List</h3>
           <table class="item-list">
-            <tr class="table-heading">
+            <tr class="table-heading flex">
               <th class="item-name">Item Name</th>
               <th class="qty">Qty</th>
               <th class="price">Price</th>
-              <th class="total">Total</th>
+              <th class="total">Toal</th>
             </tr>
-            <tr class="table-item flex" v-for="(item, index) in invoiceItemList" :key="index">
-              <td class="item-name">
-                <input type="text" v-model="item.itemName"/>
-              </td>
-              <td class="qty">
-                <input type="text" v-model="item.qty"/>
-              </td>
-              <td class="price">
-                <input type="text" v-model="item.price"/>
-              </td>
-              <td class="total flex">
-                ${{item.total = item.qty * item.price}}
-              </td>
-              <img @click="deleteInvoiceItem(item.id)" src="@/assets/icon-delete-svg"/>
+            <tr class="table-items flex" v-for="(item, index) in invoiceItemList" :key="index">
+              <td class="item-name"><input type="text" v-model="item.itemName" /></td>
+              <td class="qty"><input type="text" v-model="item.qty" /></td>
+              <td class="price"><input type="text" v-model="item.price" /></td>
+              <td class="total flex">${{ (item.total = item.qty * item.price) }}</td>
+              <img @click="deleteInvoiceItem(item.id)" src="@/assets/icon-delete.svg" alt="" />
             </tr>
           </table>
+
           <div @click="addNewInvoiceItem" class="flex button">
-            <img src="@/assets/icon-plus.svg" alt="icon"/>
+            <img src="@/assets/icon-plus.svg" alt="" />
             Add New Item
           </div>
         </div>
@@ -116,9 +112,10 @@
         <div class="left">
           <button type="button" @click="closeInvoice" class="red">Cancel</button>
         </div>
-        <div class="right">
-          <burron type="submit" @onClick="saveDraft" class="dark-purple">Save Draft</burron>
-          <burron type="submit" @onClick="publishInvoice" class="purple">Create Invoice</burron>
+        <div class="right flex">
+          <button v-if="!editInvoice" type="submit" @click="saveDraft" class="dark-purple">Save Draft</button>
+          <button v-if="!editInvoice" type="submit" @click="publishInvoice" class="purple">Create Invoice</button>
+          <button v-if="editInvoice" type="sumbit" class="purple">Update Invoice</button>
         </div>
       </div>
     </form>
@@ -126,15 +123,16 @@
 </template>
 
 <script>
-import db from '../firebase/firebaseInit';
-import Loading from '../components/Loading';
-import {mapMutations} from 'vuex';
-import {uid} from 'uid';
+import db from "../firebase/firebaseInit";
+import Loading from "../components/Loading";
+import { mapActions, mapMutations, mapState } from "vuex";
+import { uid } from "uid";
 export default {
   name: "invoiceModal",
   data() {
-    return{
+    return {
       dateOptions: { year: "numeric", month: "short", day: "numeric" },
+      docId: null,
       loading: null,
       billerStreetAddress: null,
       billerCity: null,
@@ -156,26 +154,56 @@ export default {
       invoiceDraft: null,
       invoiceItemList: [],
       invoiceTotal: 0,
-
-    }
+    };
+  },
+  components: {
+    Loading,
   },
   created() {
-    this.invoiceDateUnix = Date.now();
-    this.invoiceDate = new Date(this.invoiceDateUnix.toLocaleDateString('en-us', this.dateOptions));
+    // get current date for invoice date field
+    if (!this.editInvoice) {
+      this.invoiceDateUnix = Date.now();
+      this.invoiceDate = new Date(this.invoiceDateUnix).toLocaleDateString("en-us", this.dateOptions);
+    }
+    if (this.editInvoice) {
+      const currentInvoice = this.currentInvoiceArray[0];
+      this.docId = currentInvoice.docId;
+      this.billerStreetAddress = currentInvoice.billerStreetAddress;
+      this.billerCity = currentInvoice.billerCity;
+      this.billerZipCode = currentInvoice.billerZipCode;
+      this.billerCountry = currentInvoice.billerCountry;
+      this.clientName = currentInvoice.clientName;
+      this.clientEmail = currentInvoice.clientEmail;
+      this.clientStreetAddress = currentInvoice.clientStreetAddress;
+      this.clientCity = currentInvoice.clientCity;
+      this.clientZipCode = currentInvoice.clientZipCode;
+      this.clientCountry = currentInvoice.clientCountry;
+      this.invoiceDateUnix = currentInvoice.invoiceDateUnix;
+      this.invoiceDate = currentInvoice.invoiceDate;
+      this.paymentTerms = currentInvoice.paymentTerms;
+      this.paymentDueDateUnix = currentInvoice.paymentDueDateUnix;
+      this.paymentDueDate = currentInvoice.paymentDueDate;
+      this.productDescription = currentInvoice.productDescription;
+      this.invoicePending = currentInvoice.invoicePending;
+      this.invoiceDraft = currentInvoice.invoiceDraft;
+      this.invoiceItemList = currentInvoice.invoiceItemList;
+      this.invoiceTotal = currentInvoice.invoiceTotal;
+    }
   },
   methods: {
-    ...mapMutations(['TOGGLE_INVOICE', 'TOGGLE_MODAL']),
-
+    ...mapMutations(["TOGGLE_INVOICE", "TOGGLE_MODAL", "TOGGLE_EDIT_INVOICE"]),
+    ...mapActions(["UPDATE_INVOICE", "GET_INVOICES"]),
     checkClick(e) {
-      if(e.target === this.$refs.invoiceWrap) {
+      if (e.target === this.$refs.invoiceWrap) {
         this.TOGGLE_MODAL();
       }
     },
-
     closeInvoice() {
       this.TOGGLE_INVOICE();
+      if (this.editInvoice) {
+        this.TOGGLE_EDIT_INVOICE();
+      }
     },
-
     addNewInvoiceItem() {
       this.invoiceItemList.push({
         id: uid(),
@@ -183,40 +211,31 @@ export default {
         qty: "",
         price: 0,
         total: 0,
-      })
-    },
-
-    deleteInvoiceitem(id) {
-      this.invoiceItemList = this.invoiceItemList.filter((item) => item.id !== id)
-    },
-
-    callInvoiceTotal()  {
-      this.invoiceTotal = 0;
-      this.invoiceItemList.forEach((item) => {
-        this.invoiceTotal + item.total;
       });
     },
-
+    deleteInvoiceItem(id) {
+      this.invoiceItemList = this.invoiceItemList.filter((item) => item.id !== id);
+    },
+    calInvoiceTotal() {
+      this.invoiceTotal = 0;
+      this.invoiceItemList.forEach((item) => {
+        this.invoiceTotal += item.total;
+      });
+    },
     publishInvoice() {
       this.invoicePending = true;
     },
-
-    invoiceDraft() {
+    saveDraft() {
       this.invoiceDraft = true;
     },
-
     async uploadInvoice() {
       if (this.invoiceItemList.length <= 0) {
-        alert('Please ensure you filled out work items');
+        alert("Please ensure you filled out work items!");
         return;
       }
-
       this.loading = true;
-
-      this.callInvoiceTotal();
-
-      const dataBase = db.collection('invoices').doc();
-
+      this.calInvoiceTotal();
+      const dataBase = db.collection("invoices").doc();
       await dataBase.set({
         invoiceId: uid(6),
         billerStreetAddress: this.billerStreetAddress,
@@ -241,23 +260,61 @@ export default {
         invoiceDraft: this.invoiceDraft,
         invoicePaid: null,
       });
-
       this.loading = false;
-
       this.TOGGLE_INVOICE();
+      this.GET_INVOICES();
     },
-
+    async updateInvoice() {
+      if (this.invoiceItemList.length <= 0) {
+        alert("Please ensure you filled out work items!");
+        return;
+      }
+      this.loading = true;
+      this.calInvoiceTotal();
+      const dataBase = db.collection("invoices").doc(this.docId);
+      await dataBase.update({
+        billerStreetAddress: this.billerStreetAddress,
+        billerCity: this.billerCity,
+        billerZipCode: this.billerZipCode,
+        billerCountry: this.billerCountry,
+        clientName: this.clientName,
+        clientEmail: this.clientEmail,
+        clientStreetAddress: this.clientStreetAddress,
+        clientCity: this.clientCity,
+        clientZipCode: this.clientZipCode,
+        clientCountry: this.clientCountry,
+        paymentTerms: this.paymentTerms,
+        paymentDueDate: this.paymentDueDate,
+        paymentDueDateUnix: this.paymentDueDateUnix,
+        productDescription: this.productDescription,
+        invoiceItemList: this.invoiceItemList,
+        invoiceTotal: this.invoiceTotal,
+      });
+      this.loading = false;
+      const data = {
+        docId: this.docId,
+        routeId: this.$route.params.invoiceId,
+      };
+      this.UPDATE_INVOICE(data);
+    },
     submitForm() {
+      if (this.editInvoice) {
+        this.updateInvoice();
+        return;
+      }
       this.uploadInvoice();
     },
   },
-  watch:{
+  computed: {
+    ...mapState(["editInvoice", "currentInvoiceArray"]),
+  },
+  watch: {
     paymentTerms() {
       const futureDate = new Date();
-      this.paymentDueDateUnix = futureDate.setDate(futureDate.getDate() + parseInt(this.paymentTerms))
-      this.paymentsDueDate = new Date(this.paymentDueDateUnix).toLocaleDateString("en-us", this.dateOptions)
-    }
-  }
+      this.paymentDueDateUnix = futureDate.setDate(futureDate.getDate() + parseInt(this.paymentTerms));
+      this.paymentDueDate = new Date(this.paymentDueDateUnix).toLocaleDateString("en-us", this.dateOptions);
+    },
+  },
 };
 </script>
 
